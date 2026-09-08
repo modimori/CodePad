@@ -35,6 +35,21 @@ _RUNNERS = {
     "C#":                ("dotnet {file}", False),
     "Java":              ("java {file}", False),
     "Lua":               ("lua {file}", False),
+    "Haxe":              ("haxe --interp {file}", False),
+    "Perl":              ("perl {file}", False),
+    "Swift":             ("swift {file}", False),
+    "Kotlin":            ("kotlin {file}", False),
+    "Scala":             ("scala {file}", False),
+    "Dart":              ("dart run {file}", False),
+    "R":                 ("Rscript {file}", False),
+    "Julia":             ("julia {file}", False),
+    "Elixir":            ("elixir {file}", False),
+    "Haskell":           ("runghc {file}", False),
+    "Clojure":           ("clojure {file}", False),
+    "Erlang":            ("escript {file}", False),
+    "Pascal":            ("fpc {file} -o{base} && {base}", True),
+    "Bash":              ("bash {file}", False),
+    "Batch":             ("cmd /c {file}", False),
 }
 
 
@@ -104,6 +119,21 @@ def detect_missing_interpreter(language):
         "C#": "dotnet",
         "Java": "java",
         "Lua": "lua",
+        "Haxe": "haxe",
+        "Perl": "perl",
+        "Swift": "swift",
+        "Kotlin": "kotlin",
+        "Scala": "scala",
+        "Dart": "dart",
+        "R": "Rscript",
+        "Julia": "julia",
+        "Elixir": "elixir",
+        "Haskell": "runghc",
+        "Clojure": "clojure",
+        "Erlang": "escript",
+        "Pascal": "fpc",
+        "Bash": "bash",
+        "Batch": "cmd",
     }
     prog = needs.get(language)
     if prog and not _find(prog):

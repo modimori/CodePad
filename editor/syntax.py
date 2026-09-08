@@ -7,7 +7,9 @@ view layer turns into colors from the active theme.
 
 Supported languages: Python, JavaScript/TypeScript, HTML, CSS,
 JSON, C, C++, Java, Go, Rust, C#, Ruby, PHP, Shell, SQL, Markdown,
-XML, YAML, Lua, and plain text (no highlighting).
+XML, YAML, Lua, Haxe, Perl, Swift, Kotlin, Scala, Dart, R, Julia,
+Elixir, Haskell, Clojure, Erlang, Pascal, Bash, Dockerfile, INI/TOML,
+Batch, and plain text (no highlighting).
 """
 
 import re
@@ -320,6 +322,315 @@ _LUA = (
     (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
 )
 
+_HAXE = (
+    (r'\b(?:package|import|using|class|interface|enum|typedef|abstract|'
+     r'extends|implements|static|public|private|override|inline|dynamic|'
+     r'function|return|if|else|for|while|do|switch|case|default|break|'
+     r'continue|new|this|super|try|catch|throw|trace|var|final|in|of|'
+     r'null|true|false|callback|macro)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+
+    (r'\b\d+(?:\.\d+)?\b|\b0[xX][0-9a-fA-F]+\b', 'number'),
+
+    (r'#[^\n]*', 'comment'),
+    (r'/\*.*?\*/', 'comment'),
+
+    (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
+    (r'\b[A-Z]\w*\b', 'class'),
+)
+
+_PERL = (
+    (r'\b(?:my|our|local|sub|return|if|elsif|else|unless|for|foreach|'
+     r'while|until|do|last|next|redo|goto|use|require|package|new|'
+     r'print|say|chomp|split|join|push|pop|shift|unshift|map|grep|sort|'
+     r'defined|undef|ref|die|warn|eval|exists|delete|keys|values|'
+     r'open|close|read|write|scalar|wantarray)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+
+    (r'\$\w+|@\w+|%\w+|\$\$|\$!|\$@|\$#|\$0', 'variable'),
+    (r'\b\d+(?:\.\d+)?\b', 'number'),
+
+    (r'#[^\n]*', 'comment'),
+    (r'=pod.*?=cut', 'comment'),
+    (r'=cut', 'comment'),
+
+    (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
+)
+
+_SWIFT = (
+    (r'\b(?:func|var|let|class|struct|enum|protocol|extension|import|'
+     r'return|if|else|guard|for|while|repeat|switch|case|default|break|'
+     r'continue|fallthrough|new|self|super|init|deinit|try|catch|throw|'
+     r'throws|rethrows|defer|where|in|as|is|nil|true|false|static|final|'
+     r'public|private|fileprivate|internal|open|override|weak|unowned|'
+     r'typealias|associatedtype|mutating|nonmutating|lazy|subscript)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+
+    (r'\b\d+(?:\.\d+)?\b|\b0[xX][0-9a-fA-F]+\b', 'number'),
+
+    (r'//[^\n]*', 'comment'),
+    (r'/\*.*?\*/', 'comment'),
+
+    (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
+    (r'\b[A-Z]\w*\b', 'class'),
+)
+
+_KOTLIN = (
+    (r'\b(?:package|import|class|interface|object|fun|val|var|return|if|'
+     r'else|when|for|while|do|break|continue|new|try|catch|finally|throw|'
+     r'this|super|null|true|false|is|in|as|typealias|data|sealed|enum|'
+     r'annotation|companion|internal|protected|private|public|open|'
+     r'override|abstract|final|lateinit|const|operator|suspend|by|init|'
+     r'reified|inline|noinline|crossinline)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+    (r'"""(?:.|\n)*?"""', 'string'),
+
+    (r'\b\d+(?:\.\d+)?\b|\b0[xX][0-9a-fA-F]+\b|[uU]?[lL]+\b', 'number'),
+
+    (r'//[^\n]*', 'comment'),
+    (r'/\*.*?\*/', 'comment'),
+
+    (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
+    (r'\b[A-Z]\w*\b', 'class'),
+)
+
+_SCALA = (
+    (r'\b(?:package|import|class|object|trait|case|def|val|var|return|if|'
+     r'else|for|while|do|yield|match|new|this|super|try|catch|finally|'
+     r'throw|type|null|true|false|extends|with|abstract|final|sealed|'
+     r'implicit|lazy|override|private|protected|macro)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+    (r'"""(?:.|\n)*?"""', 'string'),
+
+    (r'\b\d+(?:\.\d+)?\b|\b0[xX][0-9a-fA-F]+\b', 'number'),
+
+    (r'//[^\n]*', 'comment'),
+    (r'/\*.*?\*/', 'comment'),
+
+    (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
+    (r'\b[A-Z]\w*\b', 'class'),
+)
+
+_DART = (
+    (r'\b(?:class|interface|extends|implements|with|abstract|enum|'
+     r'typedef|import|export|library|part|of|new|return|if|else|for|while|'
+     r'do|switch|case|break|continue|try|catch|finally|throw|rethrow|'
+     r'this|super|null|true|false|var|final|const|static|void|async|await|'
+     r'yield|sync|assert|as|is|in|show|hide|required|factory|get|set|'
+     r'operator|external|base)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+    (r"r'[^']*'", 'string'),
+
+    (r'\b\d+(?:\.\d+)?\b|\b0[xX][0-9a-fA-F]+\b', 'number'),
+
+    (r'//[^\n]*', 'comment'),
+    (r'/\*.*?\*/', 'comment'),
+
+    (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
+    (r'\b[A-Z]\w*\b', 'class'),
+)
+
+_R = (
+    (r'\b(?:function|if|else|for|while|repeat|break|next|return|library|'
+     r'require|source|TRUE|FALSE|NULL|NA|NaN|Inf|in|switch)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+
+    (r'#[^\n]*', 'comment'),
+
+    (r'\b\d+(?:\.\d+)?\b', 'number'),
+
+    (r'\b[A-Za-z.]\w*(?=\s*\()', 'function'),
+    (r'\b[A-Z]\w*\b', 'class'),
+)
+
+_JULIA = (
+    (r'\b(?:function|end|if|else|elseif|for|while|do|return|break|continue|'
+     r'import|using|module|export|struct|mutable|abstract|type|const|let|'
+     r'global|local|true|false|nothing|missing|try|catch|finally|throw|'
+     r'new|in|isa|begin|macro|where)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+    (r'"""(?:.|\n)*?"""', 'string'),
+
+    (r'\b\d+(?:\.\d+)?\b|\b0[xX][0-9a-fA-F]+\b', 'number'),
+
+    (r'#[^\n]*', 'comment'),
+    (r'#=.*?=#', 'comment'),
+
+    (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
+    (r'\b[A-Z]\w*\b', 'class'),
+)
+
+_ELIXIR = (
+    (r'\b(?:def|defp|defmodule|defmacro|defguard|if|else|unless|case|'
+     r'cond|for|with|unless|when|do|end|return|try|rescue|catch|after|'
+     r'throw|raise|true|false|nil|fn|receive|after|import|alias|require|'
+     r'use|in|not|and|or|struct|quote|unquote|super)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+    (r'"""[\s\S]*?"""', 'string'),
+
+    (r'@\w+', 'variable'),
+    (r'\b\d+(?:\.\d+)?\b', 'number'),
+
+    (r'#[^\n]*', 'comment'),
+    (r'<!--.*?-->', 'comment'),
+
+    (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
+    (r'\b[A-Z]\w*\b', 'class'),
+)
+
+_HASKELL = (
+    (r'\b(?:module|import|data|type|newtype|class|instance|where|let|in|'
+     r'case|of|if|then|else|do|deriving|infix|infixl|infixr|forall|'
+     r'module|qualified|as|hiding|type)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+
+    (r'\b\d+(?:\.\d+)?\b', 'number'),
+
+    (r'--[^\n]*', 'comment'),
+    (r'\{-(?:.|\n)*?-\}', 'comment'),
+
+    (r'^[a-z_]\w*\s*(?=\s*::\s)', 'function'),
+    (r'\b[A-Z]\w*\b', 'class'),
+)
+
+_CLOJURE = (
+    (r'\(([a-zA-Z_][\w!?*+<>=./-]*)', 'function'),
+    (r'\(def[n]?[^ ]*|\(fn|\(let|\(if|\(when|\(cond|\(loop|\(recur|'
+     r'\(do|\(->>?|\(ns|\(require|\(use|\(import|\(try|\(catch|\(finally|'
+     r'\(throw|\(for|\(doseq|\(map|\(reduce|\(filter|\(println|\(swap!|'
+     r'\(atom)', 'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r'\\\w+', 'string'),
+
+    (r';\.[^\n]*', 'comment'),
+    (r';[^\n]*', 'comment'),
+
+    (r'\b\d+(?:\.\d+)?\b', 'number'),
+
+    (r'::[a-zA-Z_][\w]*', 'type'),
+)
+
+_ERLANG = (
+    (r'\b(?:module|export|import|fun|end|if|case|of|receive|after|when|'
+     r'andalso|orelse|not|and|or|begin|try|catch|throw|true|false|'
+     r'div|rem|bnot|band|bor|bxor|bsl|bsr)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'[^']*'", 'string'),
+    (r'[a-zA-Z_][\w@]*', 'string'),
+
+    (r'\b\d+\b', 'number'),
+
+    (r'%[^\n]*', 'comment'),
+)
+
+_PASCAL = (
+    (r'\b(?:program|begin|end|var|const|type|procedure|function|if|then|'
+     r'else|case|of|for|to|downto|while|do|repeat|until|with|array|'
+     r'record|set|file|pointer|nil|uses|unit|interface|implementation|'
+     r'private|public|protected|true|false|integer|real|boolean|char|'
+     r'string|div|mod|and|or|not|exit|break|continue|read|readln|write|'
+     r'writeln|class|object)\b',
+     'keyword'),
+
+    (r"'(?:[^'\\]|\\.)*'", 'string'),
+
+    (r'\b\d+(?:\.\d+)?\b', 'number'),
+
+    (r'\{[^}]*\}', 'comment'),
+    (r'\(\*.*?\*\)', 'comment'),
+    (r'//[^\n]*', 'comment'),
+)
+
+_BASH = (
+    (r'\b(?:if|then|else|elif|fi|for|while|until|do|done|case|esac|'
+     r'function|in|return|exit|local|export|declare|select|break|continue|'
+     r'echo|read|source|alias|unalias|set|unset|shift|trap|type|test|'
+     r'let)\b',
+     'keyword'),
+
+    (r'"([^"\\]|\\.)*"', 'string'),
+    (r"'[^']*'", 'string'),
+
+    (r'\$\w+|\$\{[^}]*\}|\$\w+\[[^\]]*\]|\$@|\$\$|\$!|\$\?|\$#|\$\*',
+     'variable'),
+
+    (r'\b\d+\b', 'number'),
+
+    (r'#[^\n]*', 'comment'),
+
+    (r'\b[A-Za-z_]\w*(?=\s*\()', 'function'),
+)
+
+_DOCKERFILE = (
+    (r'^\s*(?:FROM|RUN|CMD|LABEL|MAINTAINER|EXPOSE|ENV|ADD|COPY|ENTRYPOINT|'
+     r'VOLUME|USER|WORKDIR|ARG|ONBUILD|STOPSIGNAL|HEALTHCHECK|SHELL)\b',
+     'keyword'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'[^']*'", 'string'),
+
+    (r'#[^\n]*', 'comment'),
+)
+
+_INI_TOML = (
+    (r'^\s*[A-Za-z0-9_.-]+\s*(?==)', 'constant'),
+    (r'^\s*\[[^\]]*\]', 'class'),
+
+    (r'"(?:[^"\\]|\\.)*"', 'string'),
+    (r"'[^']*'", 'string'),
+
+    (r'\b\d+(?:\.\d+)?\b', 'number'),
+    (r'\b(?:true|false|null)\b', 'keyword'),
+
+    (r'[#;][^\n]*', 'comment'),
+)
+
+_BATCH = (
+    (r'^\s*(?:@)?(?:echo|set|if|else|for|goto|call|rem|pause|title|color|'
+     r'cd|md|rd|del|copy|move|ren|cls|exit|shift|errorlevel|defined|not|'
+     r'start|choice|pushd|popd|setlocal|endlocal|assoc|ftype|path|where)\b',
+     'keyword'),
+
+    (r'%[^%]*%|%[0-9~+@*]', 'variable'),
+    (r'"[^"]*"', 'string'),
+
+    (r'rem[^\n]*', 'comment'),
+    (r'(?:^|\s)::[^\n]*', 'comment'),
+)
+
 _LANGUAGES = {
     "Python": _KEYWORDS,
     "JavaScript": _JAVASCRIPT,
@@ -341,6 +652,23 @@ _LANGUAGES = {
     "XML": _XML,
     "YAML": _YAML,
     "Lua": _LUA,
+    "Haxe": _HAXE,
+    "Perl": _PERL,
+    "Swift": _SWIFT,
+    "Kotlin": _KOTLIN,
+    "Scala": _SCALA,
+    "Dart": _DART,
+    "R": _R,
+    "Julia": _JULIA,
+    "Elixir": _ELIXIR,
+    "Haskell": _HASKELL,
+    "Clojure": _CLOJURE,
+    "Erlang": _ERLANG,
+    "Pascal": _PASCAL,
+    "Bash": _BASH,
+    "Dockerfile": _DOCKERFILE,
+    "INI/TOML": _INI_TOML,
+    "Batch": _BATCH,
     "Plain Text": [],
 }
 
@@ -363,10 +691,27 @@ _EXT_MAP = [
     (".php", "PHP"),
     (".rb", "Ruby"),
     (".sql", "SQL"),
-    (".sh", "Shell"), (".bash", "Shell"), (".zsh", "Shell"),
+    (".sh", "Shell"), (".zsh", "Shell"),
+    (".bash", "Bash"),
     (".xml", "XML"), (".svg", "XML"),
     (".yaml", "YAML"), (".yml", "YAML"),
     (".lua", "Lua"),
+    (".hx", "Haxe"), (".hxs", "Haxe"),
+    (".pl", "Perl"), (".pm", "Perl"),
+    (".swift", "Swift"),
+    (".kt", "Kotlin"), (".kts", "Kotlin"),
+    (".scala", "Scala"),
+    (".dart", "Dart"),
+    (".r", "R"), (".R", "R"),
+    (".jl", "Julia"),
+    (".ex", "Elixir"), (".exs", "Elixir"),
+    (".hs", "Haskell"),
+    (".clj", "Clojure"), (".cljs", "Clojure"), (".cljc", "Clojure"),
+    (".erl", "Erlang"),
+    (".pas", "Pascal"), (".pp", "Pascal"),
+    (".dockerfile", "Dockerfile"),
+    (".ini", "INI/TOML"), (".toml", "INI/TOML"), (".cfg", "INI/TOML"),
+    (".bat", "Batch"), (".cmd", "Batch"),
 ]
 
 # token category -> canonical tag name used in the Text widget
